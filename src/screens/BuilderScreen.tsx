@@ -8,7 +8,7 @@ import AtomPalette from '@/components/builder/AtomPalette';
 import PresetsPanel from '@/components/builder/PresetsPanel';
 import { ArrowLeft, Flame } from 'lucide-react';
 
-type Tool = 'select' | 'add' | 'move' | 'delete';
+type Tool = 'select' | 'add' | 'move' | 'delete' | 'pan';
 type Tab = 'free' | 'presets';
 
 export default function BuilderScreen() {
@@ -27,11 +27,20 @@ export default function BuilderScreen() {
       if (e.key === 's') setTool('select');
       if (e.key === 'a') setTool('add');
       if (e.key === 'm') setTool('move');
+      if (e.key === 'n') setTool('pan');
       if (e.key === 'd') setTool('delete');
       if (e.key === 'b') builder.setBondOrder(builder.bondOrder >= 3 ? 1 : builder.bondOrder + 1);
+      if (e.key === ' ') { e.preventDefault(); setTool('pan'); }
+    };
+    const keyUpHandler = (e: KeyboardEvent) => {
+      if (e.key === ' ') setTool('add');
     };
     window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener('keyup', keyUpHandler);
+    return () => {
+      window.removeEventListener('keydown', handler);
+      window.removeEventListener('keyup', keyUpHandler);
+    };
   }, [builder]);
 
   const handleTest = () => {
@@ -61,7 +70,6 @@ export default function BuilderScreen() {
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
         <aside className="w-full md:w-60 border-b md:border-b-0 md:border-r border-border/50 p-3 flex flex-col gap-3 overflow-hidden shrink-0">
-          {/* Tabs */}
           <div className="flex gap-1 glass-card p-1 rounded-xl shrink-0">
             {([['free', 'Livre'], ['presets', 'Prontas']] as const).map(([key, label]) => (
               <button key={key} onClick={() => setTab(key)}
@@ -81,8 +89,8 @@ export default function BuilderScreen() {
                 <p className="font-medium text-foreground mb-1">💡 Dicas</p>
                 <ul className="space-y-1">
                   <li>• Escolha um átomo e clique no canvas</li>
-                  <li>• Pontos tracejados = posições sugeridas</li>
-                  <li>• Clique num átomo para selecioná-lo</li>
+                  <li>• Shift+arrastar ou espaço para navegar</li>
+                  <li>• Scroll para zoom</li>
                 </ul>
               </div>
             </div>
