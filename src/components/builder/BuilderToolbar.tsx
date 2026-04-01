@@ -5,6 +5,7 @@ import {
   Trash2,
   MousePointer,
   Hand,
+  Move,
   Atom,
   EyeOff,
   Eye,
@@ -12,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-type Tool = 'select' | 'add' | 'move' | 'delete';
+type Tool = 'select' | 'add' | 'move' | 'delete' | 'pan';
 
 interface BuilderToolbarProps {
   tool: Tool;
@@ -64,30 +65,19 @@ const ToolBtn = ({
 );
 
 export default function BuilderToolbar({
-  tool,
-  setTool,
-  canUndo,
-  canRedo,
-  onUndo,
-  onRedo,
-  onClear,
-  onComplete,
-  showHydrogens,
-  onToggleH,
-  hasAtoms,
-  bondOrder,
-  setBondOrder,
+  tool, setTool, canUndo, canRedo, onUndo, onRedo, onClear, onComplete,
+  showHydrogens, onToggleH, hasAtoms, bondOrder, setBondOrder,
 }: BuilderToolbarProps) {
   return (
     <div className="flex flex-col gap-1.5 p-2 glass-card rounded-2xl">
       <ToolBtn icon={MousePointer} label="Selecionar (S)" active={tool === 'select'} onClick={() => setTool('select')} />
       <ToolBtn icon={Plus} label="Adicionar (A)" active={tool === 'add'} onClick={() => setTool('add')} />
-      <ToolBtn icon={Hand} label="Mover (M)" active={tool === 'move'} onClick={() => setTool('move')} />
+      <ToolBtn icon={Move} label="Mover átomo (M)" active={tool === 'move'} onClick={() => setTool('move')} />
+      <ToolBtn icon={Hand} label="Navegar canvas (N)" active={tool === 'pan'} onClick={() => setTool('pan')} />
       <ToolBtn icon={Trash2} label="Apagar (D)" active={tool === 'delete'} onClick={() => setTool('delete')} />
 
       <div className="border-t border-border/30 my-1" />
 
-      {/* Bond order */}
       <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
